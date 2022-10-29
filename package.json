@@ -1,0 +1,25 @@
+{
+  "name": "k8nspect",
+  "version": "0.0.1",
+  "description": "Another CLI app to inspect Kubernetes clusters.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Semmu/k8nspect.git"
+  },
+  "keywords": [
+    "kubernetes",
+    "k8s",
+    "inspect",
+    "nodejs"
+  ],
+  "author": "Laszlo Boros",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Semmu/k8nspect/issues"
+  },
+  "homepage": "https://github.com/Semmu/k8nspect#readme"
+}
