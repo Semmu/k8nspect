@@ -5,8 +5,53 @@ function rand(max: number = 20) {
 }
 
 function err(msg: object) {
-  console.error(Terminal.Special.Reset);
+  console.error(Special.Reset);
   console.error(msg);
+}
+
+function randOf<T extends {}>(en: T) : T[keyof T] {
+  const l = Object.keys(en).length;
+  const i = rand(l);
+  const ks = Object.keys(en);
+  const k = ks[i];
+  // @ts-ignore
+  const val = en[k];
+
+  return val;
+}
+
+enum Special {
+  Reset      = "\x1b[0m",
+  Bright     = "\x1b[1m",
+  Dim        = "\x1b[2m",
+  Underscore = "\x1b[4m",
+  Blink      = "\x1b[5m",
+  Reverse    = "\x1b[7m",
+  Hidden     = "\x1b[8m",
+}
+
+enum Text {
+  Default = "",
+  Black   = "\x1b[30m",
+  Red     = "\x1b[31m",
+  Green   = "\x1b[32m",
+  Yellow  = "\x1b[33m",
+  Blue    = "\x1b[34m",
+  Magenta = "\x1b[35m",
+  Cyan    = "\x1b[36m",
+  White   = "\x1b[37m",
+}
+
+enum Background {
+  Default = "",
+  Black   = "\x1b[40m",
+  Red     = "\x1b[41m",
+  Green   = "\x1b[42m",
+  Yellow  = "\x1b[43m",
+  Blue    = "\x1b[44m",
+  Magenta = "\x1b[45m",
+  Cyan    = "\x1b[46m",
+  White   = "\x1b[47m"
 }
 
 export default class Terminal {
@@ -19,40 +64,8 @@ export default class Terminal {
   private x: number = 0;
   private y: number = 0;
 
-  private color: string = "";
-  private background: string = "";
-
-  static readonly Special = {
-    Reset: "\x1b[0m",
-    Bright: "\x1b[1m",
-    Dim: "\x1b[2m",
-    Underscore: "\x1b[4m",
-    Blink: "\x1b[5m",
-    Reverse: "\x1b[7m",
-    Hidden: "\x1b[8m",
-  }
-
-  private static readonly Text = {
-    Black: "\x1b[30m",
-    Red: "\x1b[31m",
-    Green: "\x1b[32m",
-    Yellow: "\x1b[33m",
-    Blue: "\x1b[34m",
-    Magenta: "\x1b[35m",
-    Cyan: "\x1b[36m",
-    White: "\x1b[37m",
-  }
-
-  private static readonly Background = {
-    Black: "\x1b[40m",
-    Red: "\x1b[41m",
-    Green: "\x1b[42m",
-    Yellow: "\x1b[43m",
-    Blue: "\x1b[44m",
-    Magenta: "\x1b[45m",
-    Cyan: "\x1b[46m",
-    White: "\x1b[47m"
-  }
+  private color: Text = Text.Default;
+  private background: Background = Background.Default;
 
   constructor(stdin: NodeJS.ReadStream, stdout: any) {
     this.stdin = stdin;
@@ -63,7 +76,7 @@ export default class Terminal {
 
     this.stdin.on('data', (input: Buffer) => { this.onData(input) });
 
-    // setInterval(() => { this.randPut();}, 10);
+    setInterval(() => { this.randPut();}, 10);
 
     this.toggleTTYRaw();
     this.hideCursor();
@@ -75,6 +88,8 @@ export default class Terminal {
 
   randPut() {
     this.goto(rand(this.width) + 1, rand(this.height) + 1);
+    this.setColor(randOf(Text));
+    this.setBackground(randOf(Background));
     this.print(rand(10).toString());
   }
 
@@ -85,11 +100,6 @@ export default class Terminal {
 
     this.goto(5,5);
     this.print(`got ${input.toString('hex')}     `);
-    if (input.toString('hex') == '1b5b43') {
-      this.print('right')
-    } else {
-      this.print('              ')
-    }
   }
 
   toggleTTYRaw() {
@@ -106,7 +116,7 @@ export default class Terminal {
     this.clear();
     this.print(`/ w=${this.width} h=${this.height}`);
     this.goto(-1, -1);
-    this.setColor(Terminal.Text.Cyan);
+    this.setColor(Text.Cyan);
     this.print('X');
   }
 
@@ -115,11 +125,11 @@ export default class Terminal {
   }
 
   print(txt: string) {
-    this.printSpecial(Terminal.Special.Reset);
-    if (this.color.length > 0) {
+    this.printSpecial(Special.Reset);
+    if (this.color != Text.Default) {
       this.printSpecial(this.color);
     }
-    if (this.background.length > 0) {
+    if (this.background != Background.Default) {
       this.printSpecial(this.background);
     }
 
@@ -140,22 +150,17 @@ export default class Terminal {
     }
   }
 
-  setColor(color: string) {
+  setColor(color: Text) {
     this.color = color;
   }
 
-  setBackground(background: string) {
+  setBackground(background: Background) {
     this.background = background;
   }
 
   resetStyling() {
-    this.color = "";
-    this.background = "";
-  }
-
-  resetColors() {
-    this.color = "";
-    this.background = "";
+    this.color = Text.Default;
+    this.background = Background.Default;
   }
 
   goto(x: number, y: number) {
@@ -186,7 +191,7 @@ export default class Terminal {
 
   onExit() {
     this.goto(-1, -1);
-    this.printSpecial(Terminal.Special.Reset);
+    this.printSpecial(Special.Reset);
     this.showCursor();
     this.toggleTTYRaw();
   }
