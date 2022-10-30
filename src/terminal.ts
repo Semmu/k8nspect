@@ -6,7 +6,10 @@ function rand(max: number = 20) {
 
 function err(msg: object) {
   console.error(Special.Reset);
-  console.error(msg);
+  console.error({
+    time: new Date(),
+    msg
+  });
 }
 
 function randOf<T extends {}>(en: T) : T[keyof T] {
@@ -76,7 +79,7 @@ export default class Terminal {
 
     this.stdin.on('data', (input: Buffer) => { this.onData(input) });
 
-    setInterval(() => { this.randPut();}, 10);
+    // setInterval(() => { this.randPut();}, 10);
 
     this.toggleTTYRaw();
     this.hideCursor();
@@ -97,7 +100,9 @@ export default class Terminal {
 
   onData(input: Buffer) {
     if (input.toString() == '\x03') { // ctrl-c
-        process.exit();
+      this.goto(0, this.height);
+      this.print('byeeeee')
+      process.exit();
     }
 
     this.goto(5,5);
