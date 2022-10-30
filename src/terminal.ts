@@ -1,3 +1,5 @@
+import { Special, TextColor, BackgroundColor, Widget } from "./widget";
+
 const exec = require('child_process').execSync;
 
 function rand(max: number = 20) {
@@ -23,41 +25,7 @@ function randOf<T extends {}>(en: T) : T[keyof T] {
   return val;
 }
 
-enum Special {
-  Reset      = "\x1b[0m",
-  Bright     = "\x1b[1m", // default color
-  Dim        = "\x1b[2m", // darker color, could be useful for secondary text
-  Underscore = "\x1b[4m", // it is actually underscore, could be useful for hotkeys
-  Blink      = "\x1b[5m", // did not blink for me, may be too distracting anyways
-  Reverse    = "\x1b[7m", // text-background swap, could be useful for highlights
-  Hidden     = "\x1b[8m", // text is essentially just blank space
-}
-
-enum Text {
-  Default = "",
-  Black   = "\x1b[30m",
-  Red     = "\x1b[31m",
-  Green   = "\x1b[32m",
-  Yellow  = "\x1b[33m",
-  Blue    = "\x1b[34m",
-  Magenta = "\x1b[35m",
-  Cyan    = "\x1b[36m",
-  White   = "\x1b[37m",
-}
-
-enum Background {
-  Default = "",
-  Black   = "\x1b[40m",
-  Red     = "\x1b[41m",
-  Green   = "\x1b[42m",
-  Yellow  = "\x1b[43m",
-  Blue    = "\x1b[44m",
-  Magenta = "\x1b[45m",
-  Cyan    = "\x1b[46m",
-  White   = "\x1b[47m"
-}
-
-export default class Terminal {
+export class Terminal {
   private stdin: NodeJS.ReadStream;
   private stdout: any;
 
@@ -67,8 +35,14 @@ export default class Terminal {
   private x: number = 0;
   private y: number = 0;
 
-  private color: Text = Text.Default;
-  private background: Background = Background.Default;
+  private color: TextColor = TextColor.Default;
+  private background: BackgroundColor = BackgroundColor.Default;
+
+  private _widget: Widget | null = null;
+
+  set widget(widget: Widget) {
+    this._widget = widget;
+  }
 
   constructor(stdin: NodeJS.ReadStream, stdout: any) {
     this.stdin = stdin;
@@ -91,8 +65,8 @@ export default class Terminal {
 
   randPut() {
     this.goto(rand(this.width) + 1, rand(this.height) + 1);
-    this.setColor(randOf(Text));
-    this.setBackground(randOf(Background));
+    this.setColor(randOf(TextColor));
+    this.setBackground(randOf(BackgroundColor));
     this.print(rand(10).toString());
     this.printSpecial(randOf(Special));
     this.printSpecial('B');
@@ -123,8 +97,26 @@ export default class Terminal {
     this.clear();
     this.print(`/ w=${this.width} h=${this.height}`);
     this.goto(-1, -1);
-    this.setColor(Text.Cyan);
+    this.setColor(TextColor.Cyan);
     this.print('X');
+
+    if (this._widget) {
+      err({
+        msg: 'rendering widget'
+      })
+      this._widget.render();
+      const x = 5;
+      const y = 10;
+      this._widget.output?.pixels.forEach((row, iy) => {
+        row.forEach((pixel, ix) => {
+          this.goto(x+ix, y+iy);
+          this.setColor(pixel.color);
+          this.setBackground(pixel.background);
+          this.print(pixel.char);
+        })
+      })
+
+    }
   }
 
   printSpecial(txt: string) {
@@ -133,10 +125,10 @@ export default class Terminal {
 
   print(txt: string) {
     this.printSpecial(Special.Reset);
-    if (this.color != Text.Default) {
+    if (this.color != TextColor.Default) {
       this.printSpecial(this.color);
     }
-    if (this.background != Background.Default) {
+    if (this.background != BackgroundColor.Default) {
       this.printSpecial(this.background);
     }
 
@@ -157,17 +149,17 @@ export default class Terminal {
     }
   }
 
-  setColor(color: Text) {
+  setColor(color: TextColor) {
     this.color = color;
   }
 
-  setBackground(background: Background) {
+  setBackground(background: BackgroundColor) {
     this.background = background;
   }
 
   resetStyling() {
-    this.color = Text.Default;
-    this.background = Background.Default;
+    this.color = TextColor.Default;
+    this.background = BackgroundColor.Default;
   }
 
   goto(x: number, y: number) {
