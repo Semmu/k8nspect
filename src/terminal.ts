@@ -112,9 +112,17 @@ export class Terminal {
           this.goto(x+ix, y+iy);
           this.setColor(pixel.color);
           this.setBackground(pixel.background);
+          if (pixel.isDim) {
+            this.printSpecial(Special.Dim);
+          }
+          if (pixel.isUnderlined) {
+            this.printSpecial(Special.Underscore);
+          }
           this.print(pixel.char);
         })
       })
+
+      this.resetStyling();
 
     }
   }
