@@ -4,7 +4,7 @@
   "description": "Another CLI app to inspect Kubernetes clusters.",
   "main": "dist/index.js",
   "scripts": {
-    "start": "tsc --outDir dist/ && node dist/index.js",
+    "start": "tsc --outDir dist/ && node dist/index.js 2>./error.log",
     "lint": "eslint . --ext .ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
