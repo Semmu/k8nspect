@@ -54,12 +54,12 @@ export class Pixel {
   isDim: boolean;
   isUnderlined: boolean;
 
-  constructor(char: string = ' ',
+  constructor(char: string = '',
               color: TextColor = TextColor.Default,
               background: BackgroundColor = BackgroundColor.Default,
               isDim: boolean = false,
               isUnderlined: boolean = false) {
-    this.char = char.length > 0 ? char : ' ';
+    this.char = char;
     this.color = color;
     this.color = color;
     this.background = background;
@@ -381,21 +381,24 @@ export enum TextAlignment {
 
 export class MultiLine extends Label {
   alignment: TextAlignment;
+  paddingPixel: Pixel;
 
   constructor(text: string,
               alignment: TextAlignment = TextAlignment.Left,
               color: TextColor = TextColor.Default,
               background: BackgroundColor = BackgroundColor.Default,
               isDim: boolean = false,
-              isUnderlined: boolean = false) {
+              isUnderlined: boolean = false,
+              paddingPixel: Pixel = new Pixel(' ')) {
     super(text, color, background, isDim, isUnderlined);
     this.alignment = alignment;
+    this.paddingPixel = paddingPixel;
   }
 
   doRender(): Output {
     const lines = this.text.split('\n');
     const longestWidth = lines.map((line) => (line.length)).reduce((a, b) => Math.max(a, b));
-    const output = new Output(longestWidth, lines.length);
+    const output = new Output(longestWidth, lines.length, this.paddingPixel);
 
     for (let y = 0 ; y < lines.length ; y++) {
       const padding = this.alignment == TextAlignment.Left ? 0 : (
@@ -538,7 +541,9 @@ export class CanvasWidget extends Widget {
           if (destX >= 0 && destX < this.width &&
               destY >= 0 && destY < this.height) {
             // console.error(`${x}:${y}->${destX}:${destY}`)
-            output.pixels[destY][destX] = clone(child.widget.output.pixels[y][x]);
+            if (child.widget.output.pixels[y][x].char.length > 0) {
+              output.pixels[destY][destX] = clone(child.widget.output.pixels[y][x]);
+            }
           }
         }
       }

@@ -157,7 +157,7 @@ export class Terminal {
     }
 
     let remainingSpace: number = this.width - this.x + 1;
-    if (remainingSpace >= txt.length) {
+    if (remainingSpace) {
       this.stdout.write(txt);
       this.x += txt.length;
     } else {
