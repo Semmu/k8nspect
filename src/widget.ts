@@ -134,13 +134,13 @@ export class Label extends Widget {
               color: TextColor = TextColor.Default,
               background: BackgroundColor = BackgroundColor.Default,
               isDim: boolean = false,
-              inUnderlined: boolean = false) {
+              isUnderlined: boolean = false) {
     super();
     this.text = text;
     this.color = color;
     this.background = background;
     this.isDim = isDim;
-    this.isUnderlined = inUnderlined;
+    this.isUnderlined = isUnderlined;
   }
 
   doRender(): Output {
@@ -172,13 +172,13 @@ export class StyleOverrider extends DecoratorWidget {
               color: TextColor = TextColor.Red,
               background: BackgroundColor = BackgroundColor.Default,
               isDim: boolean = false,
-              inUnderlined: boolean = true) {
+              isUnderlined: boolean = true) {
     super(child);
 
     this.color = color;
     this.background = background;
     this.isDim = isDim;
-    this.isUnderlined = inUnderlined;
+    this.isUnderlined = isUnderlined;
   }
 
   doRender(): Output {
