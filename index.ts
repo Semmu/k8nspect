@@ -1,5 +1,5 @@
 import { Terminal } from './src/terminal';
-import { BackgroundColor, Label, TextColor, StyleOverrider, PaddingWidget, Pixel, BorderWidget } from './src/widget';
+import { BackgroundColor, Label, TextColor, StyleOverrider, PaddingWidget, Pixel, BorderWidget, ShadowWidget } from './src/widget';
 
 let terminal: Terminal = new Terminal(process.stdin, process.stdout);
 // let label: Label = new Label('hello there', TextColor.Red, BackgroundColor.Black);
@@ -8,9 +8,10 @@ let terminal: Terminal = new Terminal(process.stdin, process.stdout);
 
 let label = new Label('goddamn', TextColor.Red, BackgroundColor.Black);
 let padding = new PaddingWidget(label, 2, 1, new Pixel('P', TextColor.Black, BackgroundColor.Cyan));
-let border = new BorderWidget(padding, TextColor.Green);
+let border = new BorderWidget(padding, TextColor.Green, BackgroundColor.Red);
+let shadow = new ShadowWidget(border, BackgroundColor.Black);
 
-terminal.widget = border;
+terminal.widget = shadow;
 terminal.onResize();
 
 process.on('exit', () => {
