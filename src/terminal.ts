@@ -110,12 +110,19 @@ export class Terminal {
     this.print('X');
 
     if (this._widget) {
-      err({
-        msg: 'rendering widget'
-      })
+      // err({
+      //   msg: 'rendering widget'
+      // })
       this._widget.render();
       const x = 5;
       const y = 10;
+
+      // need a cache here, only print changed characters.
+      // basically keep a copy of what has been printed on screen
+      // and compare.
+      //
+      // also only print special chars (color, etc.) if they are different
+      // from the previous.
       this._widget.output.pixels.forEach((row, iy) => {
         row.forEach((pixel, ix) => {
           this.goto(x+ix, y+iy);
