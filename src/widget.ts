@@ -53,8 +53,16 @@ export class Pixel {
   }
 }
 
-function clone<T extends object>(obj: T): T {
-  return Object.assign({}, obj);
+function clone<T>(instance: T): T {
+  // this also copies class methods
+  // from: https://stackoverflow.com/a/42737273
+
+  // @ts-ignore
+  const copy = new (instance.constructor as { new (): T })();
+  // @ts-ignore
+  Object.assign(copy, instance);
+  // @ts-ignore
+  return copy;
 }
 
 export class Output {
@@ -290,5 +298,33 @@ export class ShadowWidget extends DecoratorWidget {
     }
 
     return output;
+  }
+}
+
+export class ModalWidget extends BorderWidget {
+  label: Label;
+
+  constructor(child: Widget,
+              label: Label,
+              borderColor: TextColor = TextColor.Default,
+              backgroundColor: BackgroundColor = BackgroundColor.Default) {
+    super(child, borderColor, backgroundColor);
+    this.label = label;
+  }
+
+  doRender(): Output {
+      const output = super.doRender();
+      const renderedLabel = clone(this.label)
+
+      if (renderedLabel.text.length > output.width - 2) {
+        renderedLabel.text = renderedLabel.text.substring(0, output.width - 5) + '...'
+      }
+
+      renderedLabel.render();
+      for(let x = 0 ; x < renderedLabel.output.width ; x++) {
+        output.pixels[0][x+1] = renderedLabel.output.pixels[0][x];
+      }
+
+      return output;
   }
 }
