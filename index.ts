@@ -1,5 +1,13 @@
 import { Terminal } from './src/terminal';
-import { BackgroundColor, Label, TextColor, StyleOverrider, PaddingWidget, Pixel, BorderWidget, ShadowWidget, ModalWidget, MultiLine, TextAlignment, RandomColorLabel, CanvasWidget, Position, CanvasAlignment } from './src/widget';
+import { RandomColorLabel } from './src/randomcolorlabel';
+import { PaddingWidget } from './src/paddingwidget';
+import { Pixel } from './src/pixel';
+import { BorderWidget } from './src/borderwidget';
+import { ModalWidget } from './src/modalwidget';
+import { ShadowWidget } from './src/shadowwidget';
+import { MultiLine, TextAlignment } from './src/multiline';
+import { CanvasWidget, CanvasAlignment, Position } from './src/canwaswidget';
+import { BackgroundColor, TextColor } from './src/terminal_specials';
 
 let terminal: Terminal = new Terminal(process.stdin, process.stdout);
 

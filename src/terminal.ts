@@ -1,4 +1,6 @@
-import { Special, TextColor, BackgroundColor, Widget } from "./widget";
+import { Special, TextColor, BackgroundColor } from "./terminal_specials";
+import { Pixel } from "./pixel";
+import { Widget } from "./widget";
 
 const exec = require('child_process').execSync;
 
@@ -123,7 +125,7 @@ export class Terminal {
       //
       // also only print special chars (color, etc.) if they are different
       // from the previous.
-      this._widget.output.pixels.forEach((row, iy) => {
+      this._widget.output.pixels.forEach((row: Pixel[], iy: number) => {
         row.forEach((pixel, ix) => {
           this.goto(x+ix, y+iy);
           this.setColor(pixel.color);
