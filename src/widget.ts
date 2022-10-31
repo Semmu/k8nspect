@@ -44,7 +44,7 @@ export class Pixel {
               background: BackgroundColor = BackgroundColor.Default,
               isDim: boolean = false,
               isUnderlined: boolean = false) {
-    this.char = char.length > 0 ? char[0] : ' ';
+    this.char = char.length > 0 ? char : ' ';
     this.color = color;
     this.color = color;
     this.background = background;
@@ -169,7 +169,7 @@ export class StyleOverrider extends DecoratorWidget {
   isUnderlined: boolean;
 
   constructor(child: Widget,
-              color: TextColor = TextColor.Red,
+              color: TextColor = TextColor.Default,
               background: BackgroundColor = BackgroundColor.Default,
               isDim: boolean = false,
               isUnderlined: boolean = true) {
@@ -326,5 +326,45 @@ export class ModalWidget extends BorderWidget {
       }
 
       return output;
+  }
+}
+
+export enum TextAlignment {
+  Left,
+  Center,
+  Right
+}
+
+export class MultiLine extends Label {
+  alignment: TextAlignment;
+
+  constructor(text: string,
+              alignment: TextAlignment = TextAlignment.Left,
+              color: TextColor = TextColor.Default,
+              background: BackgroundColor = BackgroundColor.Default,
+              isDim: boolean = false,
+              isUnderlined: boolean = false) {
+    super(text, color, background, isDim, isUnderlined);
+    this.alignment = alignment;
+  }
+
+  doRender(): Output {
+    const lines = this.text.split('\n');
+    const longestWidth = lines.map((line) => (line.length)).reduce((a, b) => Math.max(a, b));
+    const output = new Output(longestWidth, lines.length);
+
+    for (let y = 0 ; y < lines.length ; y++) {
+      const padding = this.alignment == TextAlignment.Left ? 0 : (
+        this.alignment == TextAlignment.Center ?
+          Math.floor((longestWidth - lines[y].length) / 2) :
+          longestWidth - lines[y].length
+      )
+
+      for (let x = 0 ; x < lines[y].length ; x++) {
+        output.pixels[y][x+padding] = new Pixel(lines[y][x], this.color, this.background, this.isDim, this.isUnderlined)
+      }
+    }
+
+    return output;
   }
 }
