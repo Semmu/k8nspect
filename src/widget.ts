@@ -353,6 +353,7 @@ export class ModalWidget extends BorderWidget {
               backgroundColor: BackgroundColor = BackgroundColor.Default) {
     super(child, borderColor, backgroundColor);
     this.label = label;
+    this.label.parent = this;
   }
 
   doRender(): Output {
@@ -490,7 +491,7 @@ export class CanvasWidget extends Widget {
         break;
 
         case CanvasAlignment.BottomLeft:
-          posY -= child.widget.output.height - 1;
+          posY -= child.widget.output.height;
         break;
 
         case CanvasAlignment.TopCenter:
@@ -504,21 +505,21 @@ export class CanvasWidget extends Widget {
 
         case CanvasAlignment.BottomCenter:
           posX -= halfOf(child.widget.output.width);
-          posY -= child.widget.output.height - 1;
+          posY -= child.widget.output.height;
         break;
 
         case CanvasAlignment.TopRight:
-          posX -= child.widget.output.width - 1;
+          posX -= child.widget.output.width;
         break;
 
         case CanvasAlignment.CenterRight:
-          posX -= child.widget.output.width - 1;
+          posX -= child.widget.output.width;
           posY -= halfOf(child.widget.output.height);
         break;
 
         case CanvasAlignment.BottomRight:
-          posX -= child.widget.output.width - 1;
-          posY -= child.widget.output.height - 1;
+          posX -= child.widget.output.width;
+          posY -= child.widget.output.height;
         break;
       }
       // console.error({
