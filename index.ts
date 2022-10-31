@@ -6,7 +6,7 @@ let terminal: Terminal = new Terminal(process.stdin, process.stdout);
 // let override = new StyleOverrider(label, TextColor.Blue, BackgroundColor.Yellow);
 // let border = new BorderWidget(padding, TextColor.Red, BackgroundColor.Green);
 
-let label = new MultiLine('goddamn\nmothafuckin12345\nmulti line',TextAlignment.Center, TextColor.Red, BackgroundColor.Black);
+let label = new MultiLine('goddamn\nmothafuckin12345\nmulti line',TextAlignment.Right, TextColor.Red, BackgroundColor.Black);
 let padding = new PaddingWidget(label, 2, 1, new Pixel('P', TextColor.Black, BackgroundColor.Cyan));
 let border = new BorderWidget(padding, TextColor.Green, BackgroundColor.Red);
 let shadow = new ShadowWidget(border, BackgroundColor.Black);
