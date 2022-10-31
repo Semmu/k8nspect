@@ -112,7 +112,7 @@ export class Output {
 }
 
 export abstract class Widget {
-  parent: Widget | null = null;
+  _parent: Widget | null = null;
 
   isDirty: boolean = true;
   private _output: Output | null = null;
@@ -128,10 +128,18 @@ export abstract class Widget {
     }
   }
 
+  set parent(widget: Widget) {
+    if (!this._parent) {
+      this._parent = widget;
+    } else {
+      console.error('cannot set parent, it is already set');
+    }
+  }
+
   markDirty() {
     this.isDirty = true;
-    if (this.parent) {
-      this.parent.markDirty();
+    if (this._parent) {
+      this._parent.markDirty();
     }
   }
 
@@ -179,7 +187,7 @@ export class RandomColorLabel extends Label {
   }
 
   doColorize() {
-    console.error('RandomColorLabel')
+    // console.error('RandomColorLabel')
     this.color = randOf(TextColor)
     this.background = randOf(BackgroundColor)
 
@@ -399,15 +407,159 @@ export class MultiLine extends Label {
         output.pixels[y][x+padding] = new Pixel(lines[y][x], this.color, this.background, this.isDim, this.isUnderlined)
       }
     }
+    // console.error('multiline render', {w: output.width, h: output.height})
 
     return output;
   }
 }
 
+// the values here sound really bad.
+export enum CanvasAlignment {
+  TopLeft,
+  CenterLeft,
+  BottomLeft,
+  BottomCenter,
+  BottomRight,
+  CenterRight,
+  TopRight,
+  TopCenter,
+  Middle
+}
+
+export class Position {
+  x: number;
+  y: number;
+
+  constructor(x: number, y: number) {
+    this.x = x;
+    this.y = y;
+  }
+}
+
+class CanvasWidgetChild {
+  widget: Widget;
+  position: Position;
+  alignment: CanvasAlignment;
+
+  constructor(widget: Widget, position: Position, alignment: CanvasAlignment) {
+    this.widget = widget;
+    this.position = position;
+    this.alignment = alignment;
+  }
+}
+
+function halfOf(num: number) {
+  return Math.floor(num / 2);
+}
+
+export class CanvasWidget extends Widget {
+  width: number;
+  height: number;
+  defaultPixel: Pixel;
+  children: CanvasWidgetChild[];
+
+  constructor(width: number, height: number, defaultPixel: Pixel = new Pixel()) {
+    super();
+    this.width = width;
+    this.height = height;
+    this.defaultPixel = defaultPixel;
+    this.children = [];
+  }
+
+  addWidget(widget: Widget, position: Position = new Position(0, 0), alignment: CanvasAlignment = CanvasAlignment.TopLeft) {
+    this.children.push(new CanvasWidgetChild(widget, position, alignment));
+    // console.error('widget added');
+    widget.parent = this;
+    this.markDirty();
+  }
+
+  doRender(): Output {
+    const output = new Output(this.width, this.height, this.defaultPixel);
+
+    this.children.forEach((child) => {
+      // console.error('child render')
+      child.widget.render();
+      let posX = child.position.x;
+      let posY = child.position.y;
+      switch(child.alignment) {
+        case CanvasAlignment.TopLeft:
+        break;
+
+        case CanvasAlignment.CenterLeft:
+          posY -= halfOf(child.widget.output.height);
+        break;
+
+        case CanvasAlignment.BottomLeft:
+          posY -= child.widget.output.height - 1;
+        break;
+
+        case CanvasAlignment.TopCenter:
+          posX -= halfOf(child.widget.output.width);
+        break;
+
+        case CanvasAlignment.Middle:
+          posX -= halfOf(child.widget.output.width);
+          posY -= halfOf(child.widget.output.height);
+        break;
+
+        case CanvasAlignment.BottomCenter:
+          posX -= halfOf(child.widget.output.width);
+          posY -= child.widget.output.height - 1;
+        break;
+
+        case CanvasAlignment.TopRight:
+          posX -= child.widget.output.width - 1;
+        break;
+
+        case CanvasAlignment.CenterRight:
+          posX -= child.widget.output.width - 1;
+          posY -= halfOf(child.widget.output.height);
+        break;
+
+        case CanvasAlignment.BottomRight:
+          posX -= child.widget.output.width - 1;
+          posY -= child.widget.output.height - 1;
+        break;
+      }
+      // console.error({
+      //   posX, posY,
+      //   child: {
+      //     w: child.widget.output.width,
+      //     h: child.widget.output.height
+      //   }
+      // })
+
+      for (let y = 0 ; y < child.widget.output.height ; y++) {
+        for (let x = 0 ; x < child.widget.output.width ; x++) {
+          const destX = x + posX;
+          const destY = y + posY;
+
+          if (destX >= 0 && destX < this.width &&
+              destY >= 0 && destY < this.height) {
+            // console.error(`${x}:${y}->${destX}:${destY}`)
+            output.pixels[destY][destX] = clone(child.widget.output.pixels[y][x]);
+          }
+        }
+      }
+
+    });
+
+    return output;
+  }
+}
+
+// color and bg
 class InvertWidget {}
 
+// crop to certain size from certain point
 class CropWidget {}
 
+// invert color and bg periodically
 class BlinkWidget {}
 
+// show and hide text periodically
 class PeekabooWidget {}
+
+// for creating copies of the same
+class DeepCopyWidget {}
+// or should we have proper clone methods everywhere?
