@@ -55,7 +55,6 @@ export class CanvasWidget extends Widget {
 
   addWidget(widget: Widget, position: Position = new Position(0, 0), alignment: CanvasAlignment = CanvasAlignment.TopLeft) {
     this.children.push(new CanvasWidgetChild(widget, position, alignment));
-    // console.error('widget added');
     widget.parent = this;
     this.markDirty();
   }
@@ -64,7 +63,6 @@ export class CanvasWidget extends Widget {
     const output = new Output(this.width, this.height, this.defaultPixel);
 
     this.children.forEach((child) => {
-      // console.error('child render')
       child.widget.render();
       let posX = child.position.x;
       let posY = child.position.y;
@@ -108,13 +106,6 @@ export class CanvasWidget extends Widget {
           posY -= child.widget.output.height;
         break;
       }
-      // console.error({
-      //   posX, posY,
-      //   child: {
-      //     w: child.widget.output.width,
-      //     h: child.widget.output.height
-      //   }
-      // })
 
       for (let y = 0 ; y < child.widget.output.height ; y++) {
         for (let x = 0 ; x < child.widget.output.width ; x++) {
@@ -123,14 +114,12 @@ export class CanvasWidget extends Widget {
 
           if (destX >= 0 && destX < this.width &&
               destY >= 0 && destY < this.height) {
-            // console.error(`${x}:${y}->${destX}:${destY}`)
             if (child.widget.output.pixels[y][x].char.length > 0) {
               output.pixels[destY][destX] = clone(child.widget.output.pixels[y][x]);
             }
           }
         }
       }
-
     });
 
     return output;

@@ -24,11 +24,10 @@ export class Label extends Widget {
   }
 
   doRender(): Output {
-    // console.error('label rendering')
     const pixels = [this.text.split('').map((char) => (
       new Pixel(char, this.color, this.background, this.isDim, this.isUnderlined)
     ))];
-    // console.error(pixels);
+
     return Output.fromPixels(pixels);
   }
 }

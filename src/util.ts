@@ -1,3 +1,5 @@
+import { Special } from "./terminal_specials";
+
 /**
  * generate random int up to $max
  *
@@ -54,4 +56,20 @@ export function clone<T>(instance: T): T {
 
   // ^ TODO i should probably write a deep-copy
   // clone function for the classes themselves.
+}
+
+/**
+ * helper to print (error) messages,
+ * it is redirected to a file,
+ * as we cannot use stdout, since
+ * we are using it for the UI.
+ *
+ * @param      {any}  msg     The (error) message to print
+ */
+export function e(msg: any) {
+  console.error(Special.Reset);
+  console.error({
+    time: new Date(),
+    msg
+  });
 }

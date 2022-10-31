@@ -13,7 +13,6 @@ export class RandomColorLabel extends Label {
   }
 
   doColorize() {
-    // console.error('RandomColorLabel')
     this.color = randOf(TextColor)
     this.background = randOf(BackgroundColor)
 

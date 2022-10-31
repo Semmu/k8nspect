@@ -13,9 +13,6 @@ export class Output {
   }
 
   constructor(width: number, height: number, defaultPixel: Pixel = new Pixel()) {
-    // this.pixels = Array(height).fill(Array(width).fill(Object.assign({}, defaultPixel)))
-    // ^ goddamn this shit does not work because multiple pixels are referencing the same object
-
     this.pixels = new Array();
     for (let y = 0 ; y < height ; y++) {
       this.pixels[y] = new Array();

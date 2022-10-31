@@ -41,7 +41,6 @@ export class MultiLine extends Label {
         output.pixels[y][x+padding] = new Pixel(lines[y][x], this.color, this.background, this.isDim, this.isUnderlined)
       }
     }
-    // console.error('multiline render', {w: output.width, h: output.height})
 
     return output;
   }

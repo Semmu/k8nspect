@@ -1,35 +1,13 @@
 import { Special, TextColor, BackgroundColor } from "./terminal_specials";
 import { Pixel } from "./pixel";
 import { Widget } from "./widget";
+import { randOf, randInt, e } from "./util";
 
 const exec = require('child_process').execSync;
 
-function rand(max: number = 20) {
-  return Math.floor(Math.random() * max);
-}
-
-function err(msg: object) {
-  console.error(Special.Reset);
-  console.error({
-    time: new Date(),
-    msg
-  });
-}
-
-function randOf<T extends {}>(en: T) : T[keyof T] {
-  const l = Object.keys(en).length;
-  const i = rand(l);
-  const ks = Object.keys(en);
-  const k = ks[i];
-  // @ts-ignore
-  const val = en[k];
-
-  return val;
-}
-
 export class Terminal {
   private stdin: NodeJS.ReadStream;
-  private stdout: any;
+  private stdout: NodeJS.WriteStream;
 
   private width: number = 0;
   private height: number = 0;
@@ -46,7 +24,7 @@ export class Terminal {
     this._widget = widget;
   }
 
-  constructor(stdin: NodeJS.ReadStream, stdout: any) {
+  constructor(stdin: NodeJS.ReadStream, stdout: NodeJS.WriteStream) {
     this.stdin = stdin;
     this.stdout = stdout;
 
@@ -69,16 +47,16 @@ export class Terminal {
     this.toggleTTYRaw();
     this.hideCursor();
 
-    err({
+    e({
       msg: 'new terminal'
     });
   }
 
   randPut() {
-    this.goto(rand(this.width) + 1, rand(this.height) + 1);
+    this.goto(randInt(this.width) + 1, randInt(this.height) + 1);
     this.setColor(randOf(TextColor));
     this.setBackground(randOf(BackgroundColor));
-    this.print(rand(10).toString());
+    this.print(randInt(10).toString());
     this.printSpecial(randOf(Special));
     this.printSpecial('B');
   }
@@ -112,7 +90,7 @@ export class Terminal {
     this.print('X');
 
     if (this._widget) {
-      // err({
+      // e({
       //   msg: 'rendering widget'
       // })
       this._widget.render();
@@ -163,7 +141,7 @@ export class Terminal {
       this.stdout.write(txt);
       this.x += txt.length;
     } else {
-      err({
+      e({
         msg: 'cannot print',
         remainingSpace: remainingSpace,
         x: this.x,
