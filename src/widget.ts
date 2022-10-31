@@ -1,3 +1,18 @@
+function rand(max: number = 20) {
+  return Math.floor(Math.random() * max);
+}
+
+function randOf<T extends {}>(en: T) : T[keyof T] {
+  const l = Object.keys(en).length;
+  const i = rand(l);
+  const ks = Object.keys(en);
+  const k = ks[i];
+  // @ts-ignore
+  const val = en[k];
+
+  return val;
+}
+
 export enum Special {
   Reset      = "\x1b[0m",
   Bright     = "\x1b[1m", // default color
@@ -153,12 +168,32 @@ export class Label extends Widget {
   }
 }
 
+export class RandomColorLabel extends Label {
+  constructor(text: string) {
+    super(text);
+    this.doColorize();
+
+    setInterval(() => {
+      this.doColorize()
+    }, 1000);
+  }
+
+  doColorize() {
+    console.error('RandomColorLabel')
+    this.color = randOf(TextColor)
+    this.background = randOf(BackgroundColor)
+
+    this.markDirty();
+  }
+}
+
 export abstract class DecoratorWidget extends Widget {
   child: Widget;
 
   constructor(child: Widget) {
     super();
     this.child = child;
+    child.parent = this;
   }
 }
 
@@ -368,3 +403,11 @@ export class MultiLine extends Label {
     return output;
   }
 }
+
+class InvertWidget {}
+
+class CropWidget {}
+
+class BlinkWidget {}
+
+class PeekabooWidget {}

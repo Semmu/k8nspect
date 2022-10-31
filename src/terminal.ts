@@ -48,10 +48,19 @@ export class Terminal {
     this.stdin = stdin;
     this.stdout = stdout;
 
+    this.goto(0, 0);
+    this.clear();
+
     this.onResize();
     this.stdout.on('resize', () => { this.onResize(); });
 
     this.stdin.on('data', (input: Buffer) => { this.onData(input) });
+
+    setInterval(() => {
+      if (this._widget && this._widget.isDirty) {
+        this.onResize()
+      }
+    }, 100);
 
     // setInterval(() => { this.randPut();}, 10);
 
@@ -94,7 +103,7 @@ export class Terminal {
     this.height = this.stdout.rows;
 
     this.goto(0, 0);
-    this.clear();
+    // this.clear();
     this.print(`/ w=${this.width} h=${this.height}`);
     this.goto(-1, -1);
     this.setColor(TextColor.Cyan);
