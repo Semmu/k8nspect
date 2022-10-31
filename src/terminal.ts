@@ -107,7 +107,7 @@ export class Terminal {
       this._widget.render();
       const x = 5;
       const y = 10;
-      this._widget.output?.pixels.forEach((row, iy) => {
+      this._widget.output.pixels.forEach((row, iy) => {
         row.forEach((pixel, ix) => {
           this.goto(x+ix, y+iy);
           this.setColor(pixel.color);

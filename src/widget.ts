@@ -39,18 +39,22 @@ export class Pixel {
   isDim: boolean;
   isUnderlined: boolean;
 
-  constructor(char: string = " ",
+  constructor(char: string = ' ',
               color: TextColor = TextColor.Default,
               background: BackgroundColor = BackgroundColor.Default,
               isDim: boolean = false,
               isUnderlined: boolean = false) {
-    this.char = char[0];
+    this.char = char.length > 0 ? char[0] : ' ';
     this.color = color;
     this.color = color;
     this.background = background;
     this.isDim = isDim;
     this.isUnderlined = isUnderlined;
   }
+}
+
+function clone<T extends object>(obj: T): T {
+  return Object.assign({}, obj);
 }
 
 export class Output {
@@ -64,8 +68,17 @@ export class Output {
     return this.pixels.length;
   }
 
-  constructor(width: number, height: number) {
-    this.pixels = Array(height).fill(Array(width).fill(new Pixel()))
+  constructor(width: number, height: number, defaultPixel: Pixel = new Pixel()) {
+    // this.pixels = Array(height).fill(Array(width).fill(Object.assign({}, defaultPixel)))
+    // ^ goddamn this shit does not work because multiple pixels are referencing the same object
+
+    this.pixels = new Array();
+    for (let y = 0 ; y < height ; y++) {
+      this.pixels[y] = new Array();
+      for (let x = 0 ; x < width ; x++) {
+        this.pixels[y][x] = clone(defaultPixel);
+      }
+    }
   }
 
   static fromPixels(pixels: Pixel[][]): Output {
@@ -187,47 +200,62 @@ export class PaddingWidget extends DecoratorWidget {
 
   doRender(): Output {
     this.child.render();
-    // console.error({
-    //   w: this.child.output.width,
-    //   h: this.child.output.height
-    // });
     const output = new Output(this.child.output.width + 2 * this.paddingX,
                               this.child.output.height + 2 * this.paddingY);
 
-    // for (let y = 0 ; y < output.height ; y++) {
-    //   for (let x = 0 ; x < output.width ; x++) {
-    //     if (x < this.paddingX || x >= this.child.output.width + this.paddingX ||
-    //         y < this.paddingY || y >= this.child.output.height + this.paddingY) {
-    //       // output.pixels[y][x] = this.paddingPixel;
-    //     } else {
-    //       console.error({
-    //         msg: `copying [${y-this.paddingY}][${x-this.paddingX}] to [${y}][${x}]`
-    //       })
-    //       console.error(this.child.output.pixels[y-this.paddingY][x-this.paddingX]);
-    //       output.pixels[y][x] = this.child.output.pixels[y-this.paddingY][x-this.paddingX];
-    //     }
-    //   }
-    // }
-
-    // console.error(output.pixels[1]);
-
-    for(let y = 0 ; y < this.paddingY ; y++) {
-      output.pixels[y] = Array(this.child.output.width + 2 * this.paddingX).fill(this.paddingPixel)
-      output.pixels[y+this.child.output.height+this.paddingY] = Array(this.child.output.width + 2 * this.paddingX).fill(this.paddingPixel)
-    }
-
-    for (let y = this.paddingY ; y < this.child.output.height + this.paddingY ; y++) {
-      for (let x = 0 ; x < this.paddingX ; x++) {
-        output.pixels[y][x] = this.paddingPixel
-        output.pixels[y][x+this.child.output.width+this.paddingX] = this.paddingPixel
+    for (let y = 0 ; y < output.height ; y++) {
+      for (let x = 0 ; x < output.width ; x++) {
+        if (x < this.paddingX || x >= this.child.output.width + this.paddingX ||
+            y < this.paddingY || y >= this.child.output.height + this.paddingY) {
+          output.pixels[y][x] = clone(this.paddingPixel);
+        } else {
+          output.pixels[y][x] = clone(this.child.output.pixels[y-this.paddingY][x-this.paddingX]);
+        }
       }
     }
+
+    return output;
+  }
+}
+
+export class BorderWidget extends DecoratorWidget {
+  borderColor: TextColor;
+  backgroundColor: BackgroundColor;
+
+  constructor(child: Widget,
+              borderColor: TextColor = TextColor.Default,
+              backgroundColor: BackgroundColor = BackgroundColor.Default) {
+    super(child);
+    this.borderColor = borderColor;
+    this.backgroundColor = backgroundColor;
+  }
+
+  doRender(): Output {
+    this.child.render();
+
+    const output = new Output(this.child.output.width + 2,
+                              this.child.output.height + 2, new Pixel('', this.borderColor, this.backgroundColor));
 
     for (let y = 0 ; y < this.child.output.height ; y++) {
       for (let x = 0 ; x < this.child.output.width ; x++) {
-        output.pixels[y+this.paddingY][x+this.paddingX] = this.child.output.pixels[y][x];
+        output.pixels[y+1][x+1] = clone(this.child.output.pixels[y][x]);
       }
     }
+
+    for (let y = 1 ; y < this.child.output.height + 1 ; y++) {
+      output.pixels[y][0].char = '\x1b(0\x78\x1b(B';
+      output.pixels[y][this.child.output.width+1].char = '\x1b(0\x78\x1b(B';
+    }
+
+    for (let x = 1 ; x < this.child.output.width + 1 ; x++) {
+      output.pixels[0][x].char = '\x1b(0\x71\x1b(B';
+      output.pixels[this.child.output.height+1][x].char = '\x1b(0\x71\x1b(B';
+    }
+
+    output.pixels[0][0].char = '\x1b(0\x6c\x1b(B'
+    output.pixels[0][this.child.output.width+1].char = '\x1b(0\x6b\x1b(B'
+    output.pixels[this.child.output.height+1][0].char = '\x1b(0\x6d\x1b(B'
+    output.pixels[this.child.output.height+1][this.child.output.width+1].char = '\x1b(0\x6a\x1b(B'
 
     return output;
   }
