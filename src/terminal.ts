@@ -40,12 +40,12 @@ export class Terminal {
       if (this._widget && this._widget.isDirty) {
         this.onResize()
       }
-    }, 100);
+    }, 1000);
 
     // setInterval(() => { this.randPut();}, 10);
 
     this.toggleTTYRaw();
-    this.hideCursor();
+    // this.hideCursor();
 
     e({
       msg: 'new terminal'
