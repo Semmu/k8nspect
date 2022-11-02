@@ -6,6 +6,7 @@
   "scripts": {
     "start": "ts-node-dev --quiet index.ts 2>./error.log",
     "lint": "eslint . --ext .ts",
+    "lintfix": "eslint . --ext .ts --fix",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
