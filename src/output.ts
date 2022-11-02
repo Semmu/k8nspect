@@ -12,14 +12,12 @@ export class Output {
     return this.pixels.length;
   }
 
-  constructor(width: number, height: number, defaultPixel: Pixel = new Pixel()) {
-    this.pixels = new Array();
-    for (let y = 0 ; y < height ; y++) {
-      this.pixels[y] = new Array();
-      for (let x = 0 ; x < width ; x++) {
-        this.pixels[y][x] = clone(defaultPixel);
-      }
-    }
+  constructor(width: number, height: number, fill: Pixel = new Pixel()) {
+    this.pixels = new Array(height).fill(undefined).map((y, yi) => (
+      new Array(width).fill(undefined).map((x, xi) => (
+        clone(fill)
+      ))
+    ));
   }
 
   static fromPixels(pixels: Pixel[][]): Output {
