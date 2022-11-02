@@ -1,101 +1,92 @@
-import { Special, TextColor, BackgroundColor } from "./terminal_specials";
-import { Pixel } from "./pixel";
-import { Widget } from "./widget";
-import { randOf, randInt, e } from "./util";
+import { Special, TextColor, BackgroundColor } from "./terminal_specials"
+import { Pixel } from "./pixel"
+import { Widget } from "./widget"
+import { randOf, randInt, e } from "./util"
 
-const exec = require('child_process').execSync;
+const exec = require("child_process").execSync
 
 export class Terminal {
-  private stdin: NodeJS.ReadStream;
-  private stdout: NodeJS.WriteStream;
+  private stdin: NodeJS.ReadStream
+  private stdout: NodeJS.WriteStream
 
-  private width: number = 0;
-  private height: number = 0;
+  private width = 0
+  private height = 0
 
-  private x: number = 0;
-  private y: number = 0;
+  private x = 0
+  private y = 0
 
-  private color: TextColor = TextColor.Default;
-  private background: BackgroundColor = BackgroundColor.Default;
+  private color: TextColor = TextColor.Default
+  private background: BackgroundColor = BackgroundColor.Default
 
-  private _widget: Widget | null = null;
+  private _widget: Widget | null = null
 
   set widget(widget: Widget) {
-    this._widget = widget;
+    this._widget = widget
   }
 
   constructor(stdin: NodeJS.ReadStream, stdout: NodeJS.WriteStream) {
-    this.stdin = stdin;
-    this.stdout = stdout;
+    this.stdin = stdin
+    this.stdout = stdout
 
-    this.goto(0, 0);
-    this.clear();
+    this.goto(0, 0)
+    this.clear()
 
-    this.onResize();
-    this.stdout.on('resize', () => { this.onResize(); });
+    this.onResize()
+    this.stdout.on("resize", () => { this.onResize() })
 
-    this.stdin.on('data', (input: Buffer) => { this.onData(input) });
+    this.stdin.on("data", (input: Buffer) => {
+      this.onKeyPress(input)
+    })
 
     setInterval(() => {
       if (this._widget && this._widget.isDirty) {
         this.onResize()
       }
-    }, 1000);
+    }, 1000)
 
-    // setInterval(() => { this.randPut();}, 10);
-
-    this.toggleTTYRaw();
+    this.toggleTTYRaw()
     // this.hideCursor();
 
     e({
-      msg: 'new terminal'
-    });
+      msg: "new terminal"
+    })
   }
 
-  randPut() {
-    this.goto(randInt(this.width) + 1, randInt(this.height) + 1);
-    this.setColor(randOf(TextColor));
-    this.setBackground(randOf(BackgroundColor));
-    this.print(randInt(10).toString());
-    this.printSpecial(randOf(Special));
-    this.printSpecial('B');
-  }
-
-  onData(input: Buffer) {
-    if (input.toString() == '\x03') { // ctrl-c
-      this.goto(0, this.height);
-      this.print('byeeeee')
-      process.exit();
+  onKeyPress(input: Buffer) {
+    if (input.toString() == "\x03") { // ctrl-c
+      this.goto(0, this.height)
+      this.print("byeeeee")
+      process.exit()
     }
 
-    this.goto(5,5);
-    this.print(`got ${input.toString('hex')}     `);
+    this.goto(5,5)
+    this.print(`got ${input.toString("hex")}     `)
   }
 
   toggleTTYRaw() {
-    exec('stty raw -echo', {
-        stdio: 'inherit'
-    });
+    exec("stty raw -echo", {
+      stdio: "inherit"
+    })
   }
 
   onResize() {
-    this.width = this.stdout.columns;
-    this.height = this.stdout.rows;
+    this.width = this.stdout.columns
+    this.height = this.stdout.rows
 
-    this.goto(0, 0);
+    this.goto(0, 0)
     // this.clear();
-    this.print(`/ w=${this.width} h=${this.height}`);
-    this.goto(-1, -1);
-    this.setColor(TextColor.Cyan);
-    this.print('X');
+    this.print(`/ w=${this.width} h=${this.height}`)
+    this.goto(-1, -1)
+    this.setColor(TextColor.Cyan)
+    this.print("X")
 
     if (this._widget) {
       // e({
       //   msg: 'rendering widget'
       // })
       // this._widget.render();
-      const x = 5;
-      const y = 10;
+      const x = 5
+      const y = 10
 
       // need a cache here, only print changed characters.
       // basically keep a copy of what has been printed on screen
@@ -105,98 +96,98 @@ export class Terminal {
       // from the previous.
       this._widget.output.pixels.forEach((row: Pixel[], iy: number) => {
         row.forEach((pixel, ix) => {
-          this.goto(x+ix, y+iy);
-          this.setColor(pixel.color);
-          this.setBackground(pixel.background);
+          this.goto(x+ix, y+iy)
+          this.setColor(pixel.color)
+          this.setBackground(pixel.background)
           if (pixel.isDim) {
-            this.printSpecial(Special.Dim);
+            this.printSpecial(Special.Dim)
           }
           if (pixel.isUnderlined) {
-            this.printSpecial(Special.Underscore);
+            this.printSpecial(Special.Underscore)
           }
-          this.print(pixel.char);
+          this.print(pixel.char)
         })
       })
 
-      this.resetStyling();
+      this.resetStyling()
 
     }
   }
 
   printSpecial(txt: string) {
-    this.stdout.write(txt);
+    this.stdout.write(txt)
   }
 
   print(txt: string) {
-    this.printSpecial(Special.Reset);
+    this.printSpecial(Special.Reset)
     if (this.color != TextColor.Default) {
-      this.printSpecial(this.color);
+      this.printSpecial(this.color)
     }
     if (this.background != BackgroundColor.Default) {
-      this.printSpecial(this.background);
+      this.printSpecial(this.background)
     }
 
-    let remainingSpace: number = this.width - this.x + 1;
+    const remainingSpace: number = this.width - this.x + 1
     if (remainingSpace) {
-      this.stdout.write(txt);
-      this.x += txt.length;
+      this.stdout.write(txt)
+      this.x += txt.length
     } else {
       e({
-        msg: 'cannot print',
+        msg: "cannot print",
         remainingSpace: remainingSpace,
         x: this.x,
         y: this.y,
         txt: txt
-      });
-      this.stdout.write(txt.substring(0, remainingSpace));
-      this.x += remainingSpace;
+      })
+      this.stdout.write(txt.substring(0, remainingSpace))
+      this.x += remainingSpace
     }
   }
 
   setColor(color: TextColor) {
-    this.color = color;
+    this.color = color
   }
 
   setBackground(background: BackgroundColor) {
-    this.background = background;
+    this.background = background
   }
 
   resetStyling() {
-    this.color = TextColor.Default;
-    this.background = BackgroundColor.Default;
+    this.color = TextColor.Default
+    this.background = BackgroundColor.Default
   }
 
   goto(x: number, y: number) {
     if (x < 0) {
-      x+= this.width + 1;
+      x+= this.width + 1
     }
     if (y < 0) {
-      y += this.height + 1;
+      y += this.height + 1
     }
 
-    this.x = x;
-    this.y = y;
-    this.printSpecial(`\x1b[${y};${x}H`);
+    this.x = x
+    this.y = y
+    this.printSpecial(`\x1b[${y};${x}H`)
   }
 
   clear() {
-    this.goto(0, 0);
-    this.printSpecial('\x1b[2J');
+    this.goto(0, 0)
+    this.printSpecial("\x1b[2J")
   }
 
   showCursor() {
-    this.printSpecial('\u001B[?25h');
+    this.printSpecial("\u001B[?25h")
   }
 
   hideCursor() {
-    this.printSpecial('\u001B[?25l');
+    this.printSpecial("\u001B[?25l")
   }
 
   onExit() {
-    this.goto(-1, -1);
-    this.printSpecial(Special.Reset);
-    this.showCursor();
-    this.toggleTTYRaw();
+    this.goto(-1, -1)
+    this.printSpecial(Special.Reset)
+    this.showCursor()
+    this.toggleTTYRaw()
   }
 
 }

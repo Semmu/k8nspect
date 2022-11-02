@@ -1,13 +1,12 @@
-import { Label } from "./label";
-import { Output } from "./output";
-import { BackgroundColor, TextColor } from "./terminal_specials";
+import { Label } from "./label"
+import { BackgroundColor, TextColor } from "./terminal_specials"
 
 export class Clock extends Label {
   constructor(color: TextColor = TextColor.Default,
-              background: BackgroundColor = BackgroundColor.Default,
-              isDim: boolean = false,
-              isUnderlined: boolean = false) {
-    super('', color, background, isDim, isUnderlined)
+    background: BackgroundColor = BackgroundColor.Default,
+    isDim = false,
+    isUnderlined = false) {
+    super("", color, background, isDim, isUnderlined)
 
     this.updateClock()
 

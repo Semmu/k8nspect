@@ -1,11 +1,11 @@
-import { Widget } from "./widget";
+import { Widget } from "./widget"
 
 export abstract class DecoratorWidget extends Widget {
-  child: Widget;
+  child: Widget
 
   constructor(child: Widget) {
-    super();
-    this.child = child;
-    child.parent = this;
+    super()
+    this.child = child
+    child.parent = this
   }
 }

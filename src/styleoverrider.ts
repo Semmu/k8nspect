@@ -1,26 +1,26 @@
-import { DecoratorWidget } from "./decoratorwidget";
-import { BackgroundColor, TextColor } from "./terminal_specials";
-import { Output } from "./output";
-import { Widget } from "./widget";
-import { Pixel } from "./pixel";
+import { DecoratorWidget } from "./decoratorwidget"
+import { BackgroundColor, TextColor } from "./terminal_specials"
+import { Output } from "./output"
+import { Widget } from "./widget"
+import { Pixel } from "./pixel"
 
 export class StyleOverrider extends DecoratorWidget {
-  color: TextColor;
-  background: BackgroundColor;
-  isDim: boolean;
-  isUnderlined: boolean;
+  color: TextColor
+  background: BackgroundColor
+  isDim: boolean
+  isUnderlined: boolean
 
   constructor(child: Widget,
-              color: TextColor = TextColor.Default,
-              background: BackgroundColor = BackgroundColor.Default,
-              isDim: boolean = false,
-              isUnderlined: boolean = true) {
-    super(child);
+    color: TextColor = TextColor.Default,
+    background: BackgroundColor = BackgroundColor.Default,
+    isDim = false,
+    isUnderlined = true) {
+    super(child)
 
-    this.color = color;
-    this.background = background;
-    this.isDim = isDim;
-    this.isUnderlined = isUnderlined;
+    this.color = color
+    this.background = background
+    this.isDim = isDim
+    this.isUnderlined = isUnderlined
   }
 
   render(): Output {

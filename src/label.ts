@@ -1,33 +1,33 @@
-import { Widget } from "./widget";
-import { TextColor, BackgroundColor } from "./terminal_specials";
-import { Pixel } from "./pixel";
-import { Output } from "./output";
+import { Widget } from "./widget"
+import { TextColor, BackgroundColor } from "./terminal_specials"
+import { Pixel } from "./pixel"
+import { Output } from "./output"
 
 export class Label extends Widget {
-  text: string;
-  color: TextColor;
-  background: BackgroundColor;
-  isDim: boolean;
-  isUnderlined: boolean;
+  text: string
+  color: TextColor
+  background: BackgroundColor
+  isDim: boolean
+  isUnderlined: boolean
 
   constructor(text: string,
-              color: TextColor = TextColor.Default,
-              background: BackgroundColor = BackgroundColor.Default,
-              isDim: boolean = false,
-              isUnderlined: boolean = false) {
-    super();
-    this.text = text;
-    this.color = color;
-    this.background = background;
-    this.isDim = isDim;
-    this.isUnderlined = isUnderlined;
+    color: TextColor = TextColor.Default,
+    background: BackgroundColor = BackgroundColor.Default,
+    isDim = false,
+    isUnderlined = false) {
+    super()
+    this.text = text
+    this.color = color
+    this.background = background
+    this.isDim = isDim
+    this.isUnderlined = isUnderlined
   }
 
   render(): Output {
-    const pixels = [this.text.split('').map((char) => (
+    const pixels = [this.text.split("").map((char) => (
       new Pixel(char, this.color, this.background, this.isDim, this.isUnderlined)
-    ))];
+    ))]
 
-    return Output.fromPixels(pixels);
+    return Output.fromPixels(pixels)
   }
 }

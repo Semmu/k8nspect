@@ -1,4 +1,4 @@
-import { Special } from "./terminal_specials";
+import { Special } from "./terminal_specials"
 
 /**
  * generate random int up to $max
@@ -6,8 +6,8 @@ import { Special } from "./terminal_specials";
  * @param      {number}  [max=20]  max number, non-inclusive
  * @return     {number}  generated random number
  */
-export function randInt(max: number = 20): number {
-  return Math.floor(Math.random() * max);
+export function randInt(max = 20): number {
+  return Math.floor(Math.random() * max)
 }
 
 /**
@@ -17,7 +17,7 @@ export function randInt(max: number = 20): number {
  * @return     {number}  floored half of the $num
  */
 export function halfOf(num: number): number {
-  return Math.floor(num / 2);
+  return Math.floor(num / 2)
 }
 
 /**
@@ -26,15 +26,15 @@ export function halfOf(num: number): number {
  * @param      {T}           en      an enum to get a random value from
  * @return     {T[keyof T]}  a random value from the $en enum
  */
-export function randOf<T extends {}>(en: T) : T[keyof T] {
-  const l = Object.keys(en).length;
-  const i = randInt(l);
-  const ks = Object.keys(en);
-  const k = ks[i];
+export function randOf<T extends object>(en: T) : T[keyof T] {
+  const l = Object.keys(en).length
+  const i = randInt(l)
+  const ks = Object.keys(en)
+  const k = ks[i]
   // @ts-ignore
-  const val = en[k];
+  const val = en[k]
 
-  return val;
+  return val
 }
 
 /**
@@ -48,11 +48,11 @@ export function clone<T>(instance: T): T {
   // from: https://stackoverflow.com/a/42737273
 
   // @ts-ignore
-  const copy = new (instance.constructor as { new (): T })();
+  const copy = new (instance.constructor as { new (): T })()
   // @ts-ignore
-  Object.assign(copy, instance);
+  Object.assign(copy, instance)
   // @ts-ignore
-  return copy;
+  return copy
 
   // ^ TODO i should probably write a deep-copy
   // clone function for the classes themselves.
@@ -67,9 +67,9 @@ export function clone<T>(instance: T): T {
  * @param      {any}  msg     The (error) message to print
  */
 export function e(msg: any) {
-  console.error(Special.Reset);
+  console.error(Special.Reset)
   console.error({
     time: new Date(),
     msg
-  });
+  })
 }

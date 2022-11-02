@@ -1,8 +1,8 @@
-import { Output } from "./output";
+import { Output } from "./output"
 
 export abstract class Widget {
   private _parent: Widget | null = null
-  private _isDirty: boolean = true
+  private _isDirty = true
   private _output: Output = new Output(0, 0)
 
   get output(): Output {
@@ -15,23 +15,23 @@ export abstract class Widget {
   }
 
   get isDirty() {
-    return this._isDirty;
+    return this._isDirty
   }
 
   abstract render(): Output
 
   set parent(widget: Widget) {
     if (!this._parent) {
-      this._parent = widget;
+      this._parent = widget
     } else {
-      throw new Error(`cannot set parent of widget, as it is already set`)
+      throw new Error("cannot set parent of widget, as it is already set")
     }
   }
 
   markDirty() {
-    this._isDirty = true;
+    this._isDirty = true
     if (this._parent) {
-      this._parent.markDirty();
+      this._parent.markDirty()
     }
   }
 }
