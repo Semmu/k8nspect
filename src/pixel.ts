@@ -19,4 +19,10 @@ export class Pixel {
     this.isDim = isDim;
     this.isUnderlined = isUnderlined;
   }
+
+  clone(): Pixel {
+    // im not sure if this is a "deep enough" clone,
+    // not referencing anything same by both instances...
+    return new Pixel(this.char, this.color, this.background, this.isDim, this.isUnderlined)
+  }
 }
