@@ -13,9 +13,12 @@ module.exports = {
         "sourceType": "module"
     },
     "plugins": [
-        "@typescript-eslint"
+        "@typescript-eslint",
+        "simple-import-sort"
     ],
     "rules": {
+        "simple-import-sort/imports": "error",
+        "simple-import-sort/exports": "warn",
         "indent": [
             "error",
             2
