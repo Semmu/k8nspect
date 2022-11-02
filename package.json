@@ -26,7 +26,8 @@
   "homepage": "https://github.com/Semmu/k8nspect#readme",
   "devDependencies": {
     "@types/node": "^18.11.8",
-    "@typescript-eslint/eslint-plugin": "^5.41.0",
+    "@typescript-eslint/eslint-plugin": "^5.42.0",
+    "@typescript-eslint/parser": "^5.42.0",
     "eslint": "^8.26.0",
     "eslint-config-standard-with-typescript": "^23.0.0",
     "eslint-plugin-import": "^2.26.0",
