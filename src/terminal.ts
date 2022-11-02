@@ -1,9 +1,8 @@
 import { Special, TextColor, BackgroundColor } from "./terminal_specials"
 import { Pixel } from "./pixel"
 import { Widget } from "./widget"
-import { randOf, randInt, e } from "./util"
-
-const exec = require("child_process").execSync
+import { e } from "./util"
+import { execSync as exec } from "child_process"
 
 export class Terminal {
   private stdin: NodeJS.ReadStream
