@@ -11,7 +11,9 @@ export class Clock extends Label {
 
     this.updateClock()
 
-    setInterval(() => {this.updateClock()}, 1000)
+    setInterval(() => {
+      this.updateClock()
+    }, 1000)
   }
 
   updateClock() {
