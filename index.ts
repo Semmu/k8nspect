@@ -6,7 +6,7 @@ import { BorderWidget } from './src/borderwidget';
 import { ModalWidget } from './src/modalwidget';
 import { ShadowWidget } from './src/shadowwidget';
 import { MultiLine, TextAlignment } from './src/multiline';
-import { CanvasWidget, CanvasAlignment, Position } from './src/canwaswidget';
+import { CanvasWidget, CanvasAlignment, Position } from './src/canvaswidget';
 import { BackgroundColor, TextColor } from './src/terminal_specials';
 import { Clock } from './src/clock';
 
