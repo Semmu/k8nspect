@@ -1,8 +1,8 @@
-import { Widget } from "./widget"
 import { Output } from "./output"
 import { Pixel } from "./pixel"
 import { halfOf } from "./util"
 import { clone } from "./util"
+import { Widget } from "./widget"
 
 // the values here sound really bad.
 export enum CanvasAlignment {

@@ -1,7 +1,7 @@
-import { TextColor, BackgroundColor } from "./terminal_specials"
-import { Pixel } from "./pixel"
-import { Output } from "./output"
 import { Label } from "./label"
+import { Output } from "./output"
+import { Pixel } from "./pixel"
+import { BackgroundColor, TextColor } from "./terminal_specials"
 
 export enum TextAlignment {
   Left,

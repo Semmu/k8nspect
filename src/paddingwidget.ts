@@ -1,8 +1,8 @@
 import { DecoratorWidget } from "./decoratorwidget"
-import { Pixel } from "./pixel"
-import { Widget } from "./widget"
 import { Output } from "./output"
+import { Pixel } from "./pixel"
 import { clone } from "./util"
+import { Widget } from "./widget"
 
 export class PaddingWidget extends DecoratorWidget {
   paddingPixel: Pixel

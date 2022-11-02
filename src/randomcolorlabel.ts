@@ -1,6 +1,6 @@
 import { Label } from "./label"
+import { BackgroundColor, TextColor } from "./terminal_specials"
 import { randInt, randOf } from "./util"
-import { TextColor, BackgroundColor } from "./terminal_specials"
 
 export class RandomColorLabel extends Label {
   constructor(text: string) {

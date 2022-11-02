@@ -1,7 +1,7 @@
-import { Widget } from "./widget"
-import { TextColor, BackgroundColor } from "./terminal_specials"
-import { Pixel } from "./pixel"
 import { Output } from "./output"
+import { Pixel } from "./pixel"
+import { BackgroundColor, TextColor } from "./terminal_specials"
+import { Widget } from "./widget"
 
 export class Label extends Widget {
   text: string

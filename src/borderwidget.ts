@@ -1,9 +1,9 @@
 import { DecoratorWidget } from "./decoratorwidget"
-import { TextColor, BackgroundColor } from "./terminal_specials"
 import { Output } from "./output"
-import { Widget } from "./widget"
 import { Pixel } from "./pixel"
+import { BackgroundColor, TextColor } from "./terminal_specials"
 import { clone } from "./util"
+import { Widget } from "./widget"
 
 export class BorderWidget extends DecoratorWidget {
   borderColor: TextColor

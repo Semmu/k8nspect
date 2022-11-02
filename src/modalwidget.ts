@@ -1,9 +1,9 @@
-import { Widget } from "./widget"
-import { TextColor, BackgroundColor } from "./terminal_specials"
-import { Output } from "./output"
 import { BorderWidget } from "./borderwidget"
 import { Label } from "./label"
+import { Output } from "./output"
+import { BackgroundColor, TextColor } from "./terminal_specials"
 import { clone } from "./util"
+import { Widget } from "./widget"
 
 export class ModalWidget extends BorderWidget {
   label: Label

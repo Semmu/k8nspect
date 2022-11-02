@@ -1,4 +1,4 @@
-import { TextColor, BackgroundColor } from "./terminal_specials"
+import { BackgroundColor, TextColor } from "./terminal_specials"
 
 export class Pixel {
   char: string

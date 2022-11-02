@@ -1,14 +1,14 @@
-import { Terminal } from "./src/terminal"
-import { RandomColorLabel } from "./src/randomcolorlabel"
+import { BorderWidget } from "./src/borderwidget"
+import { CanvasAlignment, CanvasWidget, Position } from "./src/canvaswidget"
+import { Clock } from "./src/clock"
+import { ModalWidget } from "./src/modalwidget"
+import { MultiLine, TextAlignment } from "./src/multiline"
 import { PaddingWidget } from "./src/paddingwidget"
 import { Pixel } from "./src/pixel"
-import { BorderWidget } from "./src/borderwidget"
-import { ModalWidget } from "./src/modalwidget"
+import { RandomColorLabel } from "./src/randomcolorlabel"
 import { ShadowWidget } from "./src/shadowwidget"
-import { MultiLine, TextAlignment } from "./src/multiline"
-import { CanvasWidget, CanvasAlignment, Position } from "./src/canvaswidget"
+import { Terminal } from "./src/terminal"
 import { BackgroundColor, TextColor } from "./src/terminal_specials"
-import { Clock } from "./src/clock"
 
 const terminal: Terminal = new Terminal(process.stdin, process.stdout)
 
