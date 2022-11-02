@@ -42,14 +42,14 @@ class CanvasWidgetChild {
 export class CanvasWidget extends Widget {
   width: number;
   height: number;
-  defaultPixel: Pixel;
+  fill: Pixel;
   children: CanvasWidgetChild[];
 
-  constructor(width: number, height: number, defaultPixel: Pixel = new Pixel()) {
+  constructor(width: number, height: number, fill: Pixel = new Pixel()) {
     super();
     this.width = width;
     this.height = height;
-    this.defaultPixel = defaultPixel;
+    this.fill = fill;
     this.children = [];
   }
 
@@ -60,7 +60,7 @@ export class CanvasWidget extends Widget {
   }
 
   render(): Output {
-    const output = new Output(this.width, this.height, this.defaultPixel);
+    const output = new Output(this.width, this.height, this.fill);
 
     this.children.forEach((child) => {
       let posX = child.position.x;
