@@ -19,8 +19,7 @@ export class PaddingWidget extends DecoratorWidget {
     this.paddingPixel = paddingPixel;
   }
 
-  doRender(): Output {
-    this.child.render();
+  render(): Output {
     const output = new Output(this.child.output.width + 2 * this.paddingX,
                               this.child.output.height + 2 * this.paddingY);
 

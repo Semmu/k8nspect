@@ -23,7 +23,7 @@ export class Label extends Widget {
     this.isUnderlined = isUnderlined;
   }
 
-  doRender(): Output {
+  render(): Output {
     const pixels = [this.text.split('').map((char) => (
       new Pixel(char, this.color, this.background, this.isDim, this.isUnderlined)
     ))];

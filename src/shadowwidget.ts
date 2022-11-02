@@ -13,8 +13,7 @@ export class ShadowWidget extends DecoratorWidget {
     this.shadowColor = shadowColor;
   }
 
-  doRender(): Output {
-    this.child.render();
+  render(): Output {
     const output = new Output(this.child.output.width + 1, this.child.output.height + 1);
 
     for (let y = 0 ; y < this.child.output.height ; y++) {

@@ -23,8 +23,7 @@ export class StyleOverrider extends DecoratorWidget {
     this.isUnderlined = isUnderlined;
   }
 
-  doRender(): Output {
-    this.child.render();
+  render(): Output {
     return Output.fromPixels(this.child.output.pixels.map((row: Pixel[]) => (
       row.map((pixel) => (
         new Pixel(pixel.char, this.color, this.background, this.isDim, this.isUnderlined)

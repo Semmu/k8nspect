@@ -17,9 +17,7 @@ export class BorderWidget extends DecoratorWidget {
     this.backgroundColor = backgroundColor;
   }
 
-  doRender(): Output {
-    this.child.render();
-
+  render(): Output {
     const output = new Output(this.child.output.width + 2,
                               this.child.output.height + 2, new Pixel('', this.borderColor, this.backgroundColor));
 

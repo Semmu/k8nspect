@@ -93,7 +93,7 @@ export class Terminal {
       // e({
       //   msg: 'rendering widget'
       // })
-      this._widget.render();
+      // this._widget.render();
       const x = 5;
       const y = 10;
 

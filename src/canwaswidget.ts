@@ -59,11 +59,10 @@ export class CanvasWidget extends Widget {
     this.markDirty();
   }
 
-  doRender(): Output {
+  render(): Output {
     const output = new Output(this.width, this.height, this.defaultPixel);
 
     this.children.forEach((child) => {
-      child.widget.render();
       let posX = child.position.x;
       let posY = child.position.y;
       switch(child.alignment) {

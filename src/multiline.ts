@@ -25,7 +25,7 @@ export class MultiLine extends Label {
     this.paddingPixel = paddingPixel;
   }
 
-  doRender(): Output {
+  render(): Output {
     const lines = this.text.split('\n');
     const longestWidth = lines.map((line) => (line.length)).reduce((a, b) => Math.max(a, b));
     const output = new Output(longestWidth, lines.length, this.paddingPixel);

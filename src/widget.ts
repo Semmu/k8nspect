@@ -1,38 +1,39 @@
 import { Output } from "./output";
 
 export abstract class Widget {
-  _parent: Widget | null = null;
-
-  isDirty: boolean = true;
-  private _output: Output | null = null;
+  private _parent: Widget | null = null
+  private _isDirty: boolean = true
+  private _output: Output = new Output(0, 0)
 
   get output(): Output {
-    return this._output ?? new Output(0, 0);
+    if (this._isDirty) {
+      this._output = this.render()
+      this._isDirty = false
+    }
+
+    return this._output
   }
 
-  render() {
-    if (this.isDirty) {
-      this._output = this.doRender();
-      this.isDirty = false;
-    }
+  get isDirty() {
+    return this._isDirty;
   }
+
+  abstract render(): Output
 
   set parent(widget: Widget) {
     if (!this._parent) {
       this._parent = widget;
     } else {
-      console.error('cannot set parent, it is already set');
+      throw new Error(`cannot set parent of widget, as it is already set`)
     }
   }
 
   markDirty() {
-    this.isDirty = true;
+    this._isDirty = true;
     if (this._parent) {
       this._parent.markDirty();
     }
   }
-
-  abstract doRender(): Output;
 }
 
 
