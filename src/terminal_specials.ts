@@ -20,6 +20,18 @@ export enum TextColor {
   White   = "\x1b[37m",
 }
 
+export function TextColors(): TextColor[] {
+  return new Array(TextColor.Default,
+    TextColor.Black,
+    TextColor.Red,
+    TextColor.Green,
+    TextColor.Yellow,
+    TextColor.Blue,
+    TextColor.Magenta,
+    TextColor.Cyan,
+    TextColor.White)
+}
+
 export enum BackgroundColor {
   Default = "",
   Black   = "\x1b[40m",
@@ -30,4 +42,16 @@ export enum BackgroundColor {
   Magenta = "\x1b[45m",
   Cyan    = "\x1b[46m",
   White   = "\x1b[47m"
+}
+
+export function BackgroundColors(): BackgroundColor[] {
+  return new Array(BackgroundColor.Default,
+    BackgroundColor.Black,
+    BackgroundColor.Red,
+    BackgroundColor.Green,
+    BackgroundColor.Yellow,
+    BackgroundColor.Blue,
+    BackgroundColor.Magenta,
+    BackgroundColor.Cyan,
+    BackgroundColor.White)
 }
