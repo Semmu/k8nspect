@@ -11,9 +11,12 @@ export class Terminal extends CanvasWidget {
   private stdin: NodeJS.ReadStream
   private stdout: NodeJS.WriteStream
 
+  private _nullOutput: Output = new Output(0, 0)
+  // private _previousOutput: Output = this._nullOutput
+  private _currentOutput: Output = this._nullOutput
+
   private x = 0
   private y = 0
-
   private color: TextColor = TextColor.Default
   private background: BackgroundColor = BackgroundColor.Default
 
@@ -26,7 +29,7 @@ export class Terminal extends CanvasWidget {
   }
 
   constructor(stdin: NodeJS.ReadStream, stdout: NodeJS.WriteStream) {
-    super(stdout.columns, stdout.rows, new Pixel("T"))
+    super(stdout.columns, stdout.rows, new Pixel("-"))
 
     // empty log at startup
     e({})
@@ -134,20 +137,54 @@ export class Terminal extends CanvasWidget {
     this.background = BackgroundColor.Default
   }
 
-  render() {
-    this.displayOutput()
-
-    return new Output(0, 0)
-  }
-
   displayOutput() {
-    // here do we actually print stuff to the screen.
+    e({
+      msg: 'terminal displayOutput',
+      w: this.output.width,
+      h: this.output.height,
+      d: this.isDirty
+    })
+
+    this.output.pixels.forEach((row: Pixel[], y: number) => {
+      row.forEach((pixel, x) => {
+
+        // WTF THIS IS A BUG, WHY DO I NEED +1
+        this.goto(x+1, y+1)
+
+        this.resetStyling()
+        this.printSpecial(Special.Reset)
+        this.setColor(pixel.color)
+        this.setBackground(pixel.background)
+        // if (pixel.isDim) {
+        //   this.printSpecial(Special.Dim)
+        // }
+        // if (pixel.isUnderlined) {
+        //   this.printSpecial(Special.Underscore)
+        // }
+        this.print(pixel.char)
+
+        // if (x == 2 && y == 2) {
+        //   e({
+        //     msg: "at 2:2",
+        //     c: pixel.char
+        //   })
+        //   this.goto(x, y)
+        //   this.print("2")
+        // }
+      })
+    })
+
+    // this.goto(0, 0)
+    // this.print('W')
   }
 
   markDirty() {
+    super.markDirty()
     e({
       msg: 'i should update'
     })
+
+    this.displayOutput()
   }
 
   onResize() {
@@ -155,43 +192,9 @@ export class Terminal extends CanvasWidget {
       msg: "resizing -> clear"
     })
 
-    this.resize(this.terminalWidth, this.terminalHeight)
     this.clear();
-    this.render();
-
-    /*
-    if (this._widget) {
-      // e({
-      //   msg: 'rendering widget'
-      // })
-      // this._widget.render();
-      const x = 5
-      const y = 10
-
-      // need a cache here, only print changed characters.
-      // basically keep a copy of what has been printed on screen
-      // and compare.
-      //
-      // also only print special chars (color, etc.) if they are different
-      // from the previous.
-      this._widget.output.pixels.forEach((row: Pixel[], iy: number) => {
-        row.forEach((pixel, ix) => {
-          this.goto(x+ix, y+iy)
-          this.setColor(pixel.color)
-          this.setBackground(pixel.background)
-          if (pixel.isDim) {
-            this.printSpecial(Special.Dim)
-          }
-          if (pixel.isUnderlined) {
-            this.printSpecial(Special.Underscore)
-          }
-          this.print(pixel.char)
-        })
-      })
-
-      this.resetStyling()
-
-    }/**/
+    this.resize(this.terminalWidth, this.terminalHeight)
+    this.markDirty();
   }
 
   onKeyPress(input: Buffer) {
