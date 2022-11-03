@@ -107,7 +107,7 @@ export class Terminal extends CanvasWidget {
 
     this.x = x
     this.y = y
-    this.printSpecial(`\x1b[${y};${x}H`)
+    this.printSpecial(`\x1b[${y+1};${x+1}H`)
   }
 
   clear() {
