@@ -1,6 +1,6 @@
 import { Output } from "./output"
 import { Pixel } from "./pixel"
-import { halfOf } from "./util"
+import { e, halfOf } from "./util"
 import { clone } from "./util"
 import { Widget } from "./widget"
 
@@ -57,6 +57,16 @@ export class CanvasWidget extends Widget {
     this.children.push(new CanvasWidgetChild(widget, position, alignment))
     widget.parent = this
     this.markDirty()
+  }
+
+  resize(width: number, height: number) {
+    e({
+      msg: "canvas resizing to",
+      width,
+      height
+    })
+    this.width = width
+    this.height = height
   }
 
   render(): Output {
