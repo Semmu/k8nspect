@@ -11,6 +11,8 @@ export class Terminal extends CanvasWidget {
   private stdin: NodeJS.ReadStream
   private stdout: NodeJS.WriteStream
 
+  private debugCornerMarkers: boolean = true
+
   private _nullOutput: Output = new Output(0, 0)
   // private _previousOutput: Output = this._nullOutput
   private _currentOutput: Output = this._nullOutput
@@ -174,8 +176,23 @@ export class Terminal extends CanvasWidget {
       })
     })
 
-    // this.goto(0, 0)
-    // this.print('W')
+    if (this.debugCornerMarkers) {
+      this.printSpecial(Special.Reset)
+      this.printSpecial(TextColor.Red)
+      this.printSpecial(BackgroundColor.Black)
+
+      this.goto(0, 0)
+      this.stdout.write('0')
+
+      this.goto(-1, 0)
+      this.stdout.write('<')
+
+      this.goto(0, -1)
+      this.stdout.write('^')
+
+      this.goto(-1, -1)
+      this.stdout.write('X')
+    }
   }
 
   markDirty() {
