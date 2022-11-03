@@ -25,56 +25,114 @@ export class Terminal {
   }
 
   constructor(stdin: NodeJS.ReadStream, stdout: NodeJS.WriteStream) {
+    e({
+      msg: "hello world!"
+    })
+
     this.stdin = stdin
     this.stdout = stdout
 
-    this.goto(0, 0)
-    this.clear()
-
     this.onResize()
-    this.stdout.on("resize", () => { this.onResize() })
+    this.stdout.on("resize", () => {
+      this.onResize()
+    })
 
     this.stdin.on("data", (input: Buffer) => {
       this.onKeyPress(input)
     })
 
-    setInterval(() => {
-      if (this._widget && this._widget.isDirty) {
-        this.onResize()
-      }
-    }, 1000)
-
-    this.toggleTTYRaw()
+    this.enableTTYraw()
     // this.hideCursor();
-
-    e({
-      msg: "new terminal"
-    })
   }
 
-  onKeyPress(input: Buffer) {
-    if (input.toString() == "\x03") { // ctrl-c
-      this.goto(0, this.height)
-      this.print("byeeeee")
-      process.exit()
-    }
-
-    this.goto(5,5)
-    this.print(`got ${input.toString("hex")}     `)
-  }
-
-  toggleTTYRaw() {
+  enableTTYraw() {
     exec("stty raw -echo", {
       stdio: "inherit"
     })
+  }
+
+  disableTTYraw() {
+    exec("stty -raw echo", {
+      stdio: "inherit"
+    })
+  }
+
+  printSpecial(txt: string) {
+    this.stdout.write(txt)
+  }
+
+  print(txt: string) {
+    this.printSpecial(Special.Reset)
+    if (this.color != TextColor.Default) {
+      this.printSpecial(this.color)
+    }
+    if (this.background != BackgroundColor.Default) {
+      this.printSpecial(this.background)
+    }
+
+    const remainingSpace: number = this.width - this.x + 1
+    if (remainingSpace) {
+      this.stdout.write(txt)
+      this.x += txt.length
+    } else {
+      e({
+        msg: "cannot print",
+        remainingSpace: remainingSpace,
+        x: this.x,
+        y: this.y,
+        txt: txt
+      })
+      this.stdout.write(txt.substring(0, remainingSpace))
+      this.x += remainingSpace
+    }
+  }
+
+  goto(x: number, y: number) {
+    if (x < 0) {
+      x+= this.width + 1
+    }
+    if (y < 0) {
+      y += this.height + 1
+    }
+
+    this.x = x
+    this.y = y
+    this.printSpecial(`\x1b[${y};${x}H`)
+  }
+
+  clear() {
+    this.goto(0, 0)
+    this.printSpecial("\x1b[2J")
+  }
+
+  showCursor() {
+    this.printSpecial("\u001B[?25h")
+  }
+
+  hideCursor() {
+    this.printSpecial("\u001B[?25l")
+  }
+
+  setColor(color: TextColor) {
+    this.color = color
+  }
+
+  setBackground(background: BackgroundColor) {
+    this.background = background
+  }
+
+  resetStyling() {
+    this.color = TextColor.Default
+    this.background = BackgroundColor.Default
   }
 
   onResize() {
     this.width = this.stdout.columns
     this.height = this.stdout.rows
 
+    this.printSpecial(Special.Reset)
     this.goto(0, 0)
-    // this.clear();
+    this.clear();
     this.print(`/ w=${this.width} h=${this.height}`)
     this.goto(-1, -1)
     this.setColor(TextColor.Cyan)
@@ -114,80 +172,28 @@ export class Terminal {
     }
   }
 
-  printSpecial(txt: string) {
-    this.stdout.write(txt)
-  }
+  onKeyPress(input: Buffer) {
+    e({
+      msg: 'keypress',
+      hex: input.toString('hex')
+    })
 
-  print(txt: string) {
-    this.printSpecial(Special.Reset)
-    if (this.color != TextColor.Default) {
-      this.printSpecial(this.color)
-    }
-    if (this.background != BackgroundColor.Default) {
-      this.printSpecial(this.background)
-    }
+    this.onResize()
 
-    const remainingSpace: number = this.width - this.x + 1
-    if (remainingSpace) {
-      this.stdout.write(txt)
-      this.x += txt.length
-    } else {
+    if (input.toString() == "\x03") { // ctrl-c
       e({
-        msg: "cannot print",
-        remainingSpace: remainingSpace,
-        x: this.x,
-        y: this.y,
-        txt: txt
+        msg: 'goodbye world!'
       })
-      this.stdout.write(txt.substring(0, remainingSpace))
-      this.x += remainingSpace
+      process.exit()
     }
-  }
-
-  setColor(color: TextColor) {
-    this.color = color
-  }
-
-  setBackground(background: BackgroundColor) {
-    this.background = background
-  }
-
-  resetStyling() {
-    this.color = TextColor.Default
-    this.background = BackgroundColor.Default
-  }
-
-  goto(x: number, y: number) {
-    if (x < 0) {
-      x+= this.width + 1
-    }
-    if (y < 0) {
-      y += this.height + 1
-    }
-
-    this.x = x
-    this.y = y
-    this.printSpecial(`\x1b[${y};${x}H`)
-  }
-
-  clear() {
-    this.goto(0, 0)
-    this.printSpecial("\x1b[2J")
-  }
-
-  showCursor() {
-    this.printSpecial("\u001B[?25h")
-  }
-
-  hideCursor() {
-    this.printSpecial("\u001B[?25l")
   }
 
   onExit() {
     this.goto(-1, -1)
     this.printSpecial(Special.Reset)
+    this.printSpecial("\n\rsee you soon!\n\r")
     this.showCursor()
-    this.toggleTTYRaw()
+    this.disableTTYraw()
   }
 
 }
