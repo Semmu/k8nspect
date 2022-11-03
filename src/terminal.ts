@@ -1,16 +1,15 @@
 import { execSync as exec } from "child_process"
+import { CanvasWidget } from "./canvaswidget"
+import { Output } from "./output"
 
 import { Pixel } from "./pixel"
 import { BackgroundColor, Special, TextColor } from "./terminal_specials"
 import { e } from "./util"
 import { Widget } from "./widget"
 
-export class Terminal {
+export class Terminal extends CanvasWidget {
   private stdin: NodeJS.ReadStream
   private stdout: NodeJS.WriteStream
-
-  private width = 0
-  private height = 0
 
   private x = 0
   private y = 0
@@ -18,24 +17,32 @@ export class Terminal {
   private color: TextColor = TextColor.Default
   private background: BackgroundColor = BackgroundColor.Default
 
-  private _widget: Widget | null = null
+  get terminalWidth() {
+    return this.stdout.columns
+  }
 
-  set widget(widget: Widget) {
-    this._widget = widget
+  get terminalHeight() {
+    return this.stdout.rows
   }
 
   constructor(stdin: NodeJS.ReadStream, stdout: NodeJS.WriteStream) {
-    e({
-      msg: "hello world!"
-    })
+    super(stdout.columns, stdout.rows, new Pixel("T"))
 
+    // empty log at startup
+    e({})
+
+    // setup in&out streams
     this.stdin = stdin
     this.stdout = stdout
 
-    this.onResize()
+    // setup onresize trigger
     this.stdout.on("resize", () => {
       this.onResize()
     })
+
+    // we need to force an initial resize,
+    // which causes the initial render.
+    this.onResize()
 
     this.stdin.on("data", (input: Buffer) => {
       this.onKeyPress(input)
@@ -102,6 +109,7 @@ export class Terminal {
 
   clear() {
     this.goto(0, 0)
+    this.printSpecial(Special.Reset)
     this.printSpecial("\x1b[2J")
   }
 
@@ -126,18 +134,32 @@ export class Terminal {
     this.background = BackgroundColor.Default
   }
 
+  render() {
+    this.displayOutput()
+
+    return new Output(0, 0)
+  }
+
+  displayOutput() {
+    // here do we actually print stuff to the screen.
+  }
+
+  markDirty() {
+    e({
+      msg: 'i should update'
+    })
+  }
+
   onResize() {
-    this.width = this.stdout.columns
-    this.height = this.stdout.rows
+    e({
+      msg: "resizing -> clear"
+    })
 
-    this.printSpecial(Special.Reset)
-    this.goto(0, 0)
+    this.resize(this.terminalWidth, this.terminalHeight)
     this.clear();
-    this.print(`/ w=${this.width} h=${this.height}`)
-    this.goto(-1, -1)
-    this.setColor(TextColor.Cyan)
-    this.print("X")
+    this.render();
 
+    /*
     if (this._widget) {
       // e({
       //   msg: 'rendering widget'
@@ -169,7 +191,7 @@ export class Terminal {
 
       this.resetStyling()
 
-    }
+    }/**/
   }
 
   onKeyPress(input: Buffer) {
@@ -177,8 +199,6 @@ export class Terminal {
       msg: 'keypress',
       hex: input.toString('hex')
     })
-
-    this.onResize()
 
     if (input.toString() == "\x03") { // ctrl-c
       e({
@@ -188,12 +208,15 @@ export class Terminal {
     }
   }
 
-  onExit() {
+  printExitMessage() {
     this.goto(-1, -1)
     this.printSpecial(Special.Reset)
     this.printSpecial("\n\rsee you soon!\n\r")
+  }
+
+  onExit() {
+    this.printExitMessage()
     this.showCursor()
     this.disableTTYraw()
   }
-
 }

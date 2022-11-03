@@ -39,8 +39,7 @@ canvas.addWidget(clock, new Position(canvas.width, 0), CanvasAlignment.TopRight)
 const damn = new MultiLine("i should be working on more important things\nalso write proper tests for these classes", TextAlignment.Left, TextColor.Yellow, BackgroundColor.Default, true, false, new Pixel(""))
 canvas.addWidget(damn, new Position(0, canvas.height), CanvasAlignment.BottomLeft)
 
-terminal.widget = canvas
-terminal.onResize()
+terminal.addWidget(canvas)
 
 process.on("exit", () => {
   terminal.onExit()
