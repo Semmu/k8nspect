@@ -101,15 +101,17 @@ export class Terminal extends CanvasWidget {
 
   goto(x: number, y: number) {
     if (x < 0) {
-      x+= this.width + 1
+      x+= this.width
     }
     if (y < 0) {
-      y += this.height + 1
+      y += this.height
     }
 
     this.x = x
     this.y = y
     this.printSpecial(`\x1b[${y+1};${x+1}H`)
+    // ^ this casually wasted my time as i assumed these
+    // coordinates are 0-based, but nah, they start from 1...
   }
 
   clear() {
