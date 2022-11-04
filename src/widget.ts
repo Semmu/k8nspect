@@ -3,7 +3,7 @@ import { Output } from "./output"
 export abstract class Widget {
   private _parent: Widget | null = null
   private _isDirty = true
-  private _output: Output = new Output(0, 0)
+  protected _output: Output = new Output(0, 0)
 
   get output(): Output {
     if (this._isDirty) {
@@ -18,7 +18,7 @@ export abstract class Widget {
     return this._isDirty
   }
 
-  abstract render(): Output
+  protected abstract render(): Output
 
   set parent(widget: Widget) {
     if (!this._parent) {

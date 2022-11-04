@@ -16,6 +16,6 @@ export class RandomColorLabel extends Label {
 
     setTimeout(() => {
       this.doColorize()
-    }, randInt(1000) + 100)
+    }, 5000 + randInt(300))
   }
 }

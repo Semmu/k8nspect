@@ -22,7 +22,7 @@ export class ShadowWidget extends DecoratorWidget {
       }
     }
 
-    const shadowCharacter = new Pixel(" ", TextColor.White, this.shadowColor)
+    const shadowCharacter = new Pixel(" ", TextColor.Default, this.shadowColor)
 
     for (let y = 0 ; y < this.child.output.height ; y++) {
       output.pixels[y+1][this.child.output.width] = shadowCharacter
