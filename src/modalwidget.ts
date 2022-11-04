@@ -2,19 +2,18 @@ import { BorderWidget } from "./borderwidget"
 import { Label } from "./label"
 import { Output } from "./output"
 import { BackgroundColor, TextColor } from "./terminal_specials"
-import { clone } from "./util"
 import { Widget } from "./widget"
 
 export class ModalWidget extends BorderWidget {
-  label: Label
+  title: Label
 
-  constructor(child: Widget,
-    label: Label,
+  constructor(title: Label,
+    contents: Widget,
     borderColor: TextColor = TextColor.Default,
     backgroundColor: BackgroundColor = BackgroundColor.Default) {
-    super(child, borderColor, backgroundColor)
-    this.label = label
-    this.label.parent = this
+    super(contents, borderColor, backgroundColor)
+    this.title = title
+    this.title.parent = this
   }
 
   render(): Output {
@@ -23,7 +22,7 @@ export class ModalWidget extends BorderWidget {
     // cloning the original label causes dynamic labels to wreak havoc,
     // as both the original and new one will trigger a refresh on its parent.
     // solving this is actually an interesting question...
-    const renderedLabel = this.label
+    const renderedLabel = this.title
     // but if i dont clone this label, cropping the modal title modifies
     // the original variable.
 
