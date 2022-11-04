@@ -38,22 +38,6 @@ export abstract class Widget {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // color and bg
 class InvertWidget {}
 
@@ -69,3 +53,6 @@ class PeekabooWidget {}
 // for creating copies of the same
 class DeepCopyWidget {}
 // or should we have proper clone methods everywhere?
+
+// for truncating lines to fix width
+class TruncateLabel {}
