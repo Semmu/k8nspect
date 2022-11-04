@@ -19,7 +19,13 @@ export class ModalWidget extends BorderWidget {
 
   render(): Output {
     const output = super.render()
-    const renderedLabel = clone(this.label)
+
+    // cloning the original label causes dynamic labels to wreak havoc,
+    // as both the original and new one will trigger a refresh on its parent.
+    // solving this is actually an interesting question...
+    const renderedLabel = this.label
+    // but if i dont clone this label, cropping the modal title modifies
+    // the original variable.
 
     if (renderedLabel.text.length > output.width - 2) {
       renderedLabel.text = renderedLabel.text.substring(0, output.width - 5) + "..."
