@@ -100,6 +100,11 @@ export class Terminal extends CanvasWidget {
   }
 
   goto(x: number, y: number) {
+    // these make x (and y) fall into the [-x, x) interval
+    x = x % this.width
+    y = y % this.height
+
+    // this makes sure these fall into [0, x) interval
     if (x < 0) {
       x+= this.width
     }
