@@ -5,7 +5,6 @@ import { Output } from "./output"
 import { Pixel } from "./pixel"
 import { BackgroundColor, Special, TextColor } from "./terminal_specials"
 import { e } from "./util"
-import { Widget } from "./widget"
 
 export class Terminal extends CanvasWidget {
   private stdin: NodeJS.ReadStream
@@ -156,30 +155,21 @@ export class Terminal extends CanvasWidget {
 
     this.output.pixels.forEach((row: Pixel[], y: number) => {
       row.forEach((pixel, x) => {
+        this.goto(x, y)
 
-        // WTF THIS IS A BUG, WHY DO I NEED +1
-        this.goto(x+1, y+1)
-
-        this.resetStyling()
         this.printSpecial(Special.Reset)
-        this.setColor(pixel.color)
-        this.setBackground(pixel.background)
-        // if (pixel.isDim) {
-        //   this.printSpecial(Special.Dim)
-        // }
-        // if (pixel.isUnderlined) {
-        //   this.printSpecial(Special.Underscore)
-        // }
-        this.print(pixel.char)
-
-        // if (x == 2 && y == 2) {
-        //   e({
-        //     msg: "at 2:2",
-        //     c: pixel.char
-        //   })
-        //   this.goto(x, y)
-        //   this.print("2")
-        // }
+        this.printSpecial(pixel.color)
+        this.printSpecial(pixel.background)
+        if (pixel.isDim) {
+          this.printSpecial(Special.Dim)
+        }
+        if (pixel.isUnderlined) {
+          this.printSpecial(Special.Underscore)
+        }
+        if (pixel.isInverted) {
+          this.printSpecial(Special.Reverse)
+        }
+        this.stdout.write(pixel.char)
       })
     })
 
