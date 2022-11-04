@@ -29,8 +29,8 @@ export class Terminal extends CanvasWidget {
     return this.stdout.rows
   }
 
-  constructor(stdin: NodeJS.ReadStream, stdout: NodeJS.WriteStream) {
-    super(stdout.columns, stdout.rows, new Pixel("-"))
+  constructor(stdin: NodeJS.ReadStream, stdout: NodeJS.WriteStream, fill: Pixel = new Pixel()) {
+    super(stdout.columns, stdout.rows, fill)
 
     // empty log at startup
     e({})
